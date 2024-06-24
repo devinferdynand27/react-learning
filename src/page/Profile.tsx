@@ -1,46 +1,29 @@
-import  { useEffect } from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { fetchProducts } from "../reducer/services/produk/productActions";
+import React, { useEffect } from 'react';
+import { useAppDispatch, useAppSelector } from '../app/hooks'; // Gunakan hook yang baru saja kita buat
+import { fetchData } from '../reducers/services/apiActions';
 
-const Profile = () => {
-  const dispatch = useDispatch();
-  const productState = useSelector((state) => state.products);
+const DataComponent: React.FC = () => {
+  const dispatch = useAppDispatch();
+  const { data, loading, error } = useAppSelector((state) => state.api);
 
   useEffect(() => {
-    dispatch(fetchProducts());
+    dispatch(fetchData());
   }, [dispatch]);
 
-  if (productState.loading) {
-    return <div>Loading...</div>;
-  }
-
-  if (productState.error) {
-    return <div>Error: {productState.error.message}</div>;
-  }
+  if (loading) return <p>Loading...</p>;
+  if (error) return <p>Error: {error}</p>;
 
   return (
     <div>
-      <h2>Daftar Produk</h2>
-      {(
-        <table>
-          <thead>
-            <tr>
-              <th>Name</th>
-              <th>Price</th>
-            </tr>
-          </thead>
-          <tbody>
-            {productState.products.map((product, index) => (
-              <tr key={index}>
-                <td>{product.title}</td>
-                <td>{product.price}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+      <h1>Data</h1>
+      <ul>
+        {data && data.map((item: any, index: number) => (
+          <li key={index}>{item.title}</li>
+          // Ganti 'item.title' dengan properti dari objek 'item' yang ingin Anda tampilkan
+        ))}
+      </ul>
     </div>
   );
 };
 
-export default Profile;
+export default DataComponent;
